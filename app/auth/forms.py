@@ -46,7 +46,7 @@ class ChangePasswordForm(FlaskForm):
 
 
 class PasswordResetRequestForm(FlaskForm):
-    email = StringField('Email',validators=[Required(),Length(1,63),Email()])
+    email = StringField('Email',validators=[Required(),Length(1,64),Email()])
     submit = SubmitField('重设密码')
 
 
@@ -61,9 +61,15 @@ class PasswordResetForm(FlaskForm):
             raise ValidationError('错误的邮箱地址')
 
 
+class ChangeEmailForm(FlaskForm):
+    email = StringField('New Email', validators=[Required(), Length(1, 64),
+                                                         Email()])
+    password = PasswordField('Password', validators=[Required()])
+    submit = SubmitField('Update Email Address')
 
-
-
+    def validate_email(self, field):
+        if User.query.filter_by(email=field.data).first():
+            raise ValidationError('Email already registered.')
 
 
 
